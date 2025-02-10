@@ -7,6 +7,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -84,7 +86,7 @@ public class Converter {
         String result = "{}"; // default return value; replace later!
         StringBuilder csvFile = new StringBuilder();
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(csvString));
+            BufferedReader reader = new BufferedReader(new FileReader("input.csv"));
             String line;
             while((line = reader.readLine()) !=null) {
             csvFile.append(line) .append('\n');
@@ -94,6 +96,56 @@ public class Converter {
             e.printStackTrace();
         }
         
+
+        String[] lines = csvString.split("\n");
+
+        String[] headers = lines[0].split(",");
+
+        List<Map<String, String>> jsonList = new ArrayList<>();
+
+        
+        for (int i = 1; i < lines.length; i++) {
+            String[] values = lines[i].split(",");
+            Map<String, String> jsonObject = new HashMap<>();
+            
+           
+            for (int j = 0; j < headers.length; j++) {
+                jsonObject.put(headers[j], values[j]);
+            }
+
+            jsonList.add(jsonObject);
+        }
+
+        
+        StringBuilder jsonOutput = new StringBuilder("[\n");
+
+        for (int i = 0; i < jsonList.size(); i++) {
+            Map<String, String> jsonObject = jsonList.get(i);
+            jsonOutput.append("  {\n");
+            
+            Iterator<Map.Entry<String, String>> iterator = jsonObject.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Map.Entry<String, String> entry = iterator.next();
+                jsonOutput.append("    \"").append(entry.getKey()).append("\": \"")
+                           .append(entry.getValue()).append("\"");
+                if (iterator.hasNext()) {
+                    jsonOutput.append(",");
+                }
+                jsonOutput.append("\n");
+            }
+
+            jsonOutput.append("  }");
+            if (i < jsonList.size() - 1) {
+                jsonOutput.append(",");
+            }
+            jsonOutput.append("\n");
+        }
+
+        jsonOutput.append("]");
+
+        System.out.println(jsonOutput.toString());
+    
+
         return result.trim();
         
     }
@@ -109,11 +161,14 @@ public class Converter {
                 jsonString = jsonString.substring(1, jsonString.length() - 1);
             }
             String[] objects = jsonString.split("},\\s*\\{}");
+          
+            for (int i = 0; i < objects.length; i++) {
+                objects[i] = objects[i].replace("{", "").replace("}", "").trim();
+            }
             
             List<Map<String, String>> rows = new ArrayList<>();
             
             for (String object : objects) {
-            object = object.replace("{", "").replace("}", "").trim();
             String[] keyValuePairs = object.split(",\\s*");
             
                 Map<String, String> row = new LinkedHashMap<>();
@@ -140,6 +195,7 @@ public class Converter {
                     }
                     csvBuilder.append(String.join(",", values)).append("\n");
                 }
+                result = csvBuilder.toString();
              }
         }
         catch (Exception e) {
@@ -148,6 +204,7 @@ public class Converter {
         
         return result.trim();
         
-    }
+      
+     }
     }
  
