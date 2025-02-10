@@ -2,7 +2,13 @@ package edu.jsu.mcis.cs310;
 
 import com.github.cliftonlabs.json_simple.*;
 import com.opencsv.*;
-
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 public class Converter {
     
     /*
@@ -75,13 +81,15 @@ public class Converter {
     public static String csvToJson(String csvString) {
         
         String result = "{}"; // default return value; replace later!
-        
+        StringBuilder csvFile = new StringBuilder();
         try {
-        
-            // INSERT YOUR CODE HERE
-            
+            BufferedReader reader = new BufferedReader(new FileReader(csvString));
+            String line;
+            while((line = reader.readLine()) !=null) {
+            csvFile.append(line) .append('\n');
+            }
         }
-        catch (Exception e) {
+        catch (IOException e) {
             e.printStackTrace();
         }
         
@@ -95,8 +103,16 @@ public class Converter {
         String result = ""; // default return value; replace later!
         
         try {
+            jsonString = jsonString.trim();
+            if (jsonString.startsWith("[") && jsonString.endsWith("]")) {
+                jsonString = jsonString.substring(1, jsonString.length() - 1);
+            }
+            String[] objects = jsonString.split("},\\s*\\{}");
             
-            // INSERT YOUR CODE HERE
+            List<Map<String, String>> rows = new ArrayList<>();
+            
+            for ()
+            
             
         }
         catch (Exception e) {
