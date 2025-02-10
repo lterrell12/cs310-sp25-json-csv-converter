@@ -149,13 +149,5 @@ public class Converter {
         return result.trim();
         
     }
-        public static void main(String[] args) {
-        // Test the method with a sample JSON input
-        String jsonInput = "[{\"name\":\"John\",\"age\":\"25\",\"city\":\"New York\"},"
-                + "{\"name\":\"Jane\",\"age\":\"30\",\"city\":\"Los Angeles\"}]";
-
-        // Convert JSON to CSV and print result
-        String csvResult = jsonToCsv(jsonInput);
-        System.out.println(csvResult);
     }
-}
+ 
