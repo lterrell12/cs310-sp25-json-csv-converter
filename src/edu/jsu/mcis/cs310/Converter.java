@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 public class Converter {
@@ -111,9 +112,35 @@ public class Converter {
             
             List<Map<String, String>> rows = new ArrayList<>();
             
-            for ()
+            for (String object : objects) {
+            object = object.replace("{", "").replace("}", "").trim();
+            String[] keyValuePairs = object.split(",\\s*");
             
-            
+                Map<String, String> row = new LinkedHashMap<>();
+                for (String pair : keyValuePairs) {
+                    String[] keyValue = pair.split(":\\s*");
+                    String key = keyValue[0].replace("\"", "").trim();
+                    String value = keyValue[1].replace("\"", "").trim();
+                    row.put(key, value);
+                }
+                rows.add(row);
+            }
+             if (!rows.isEmpty()) {
+                Map<String, String> firstRow = rows.get(0);
+                List<String> headers = new ArrayList<>(firstRow.keySet());
+                StringBuilder csvBuilder = new StringBuilder();
+
+                csvBuilder.append(String.join(",", headers)).append("\n");
+
+                for (Map<String, String> row : rows) {
+                    List<String> values = new ArrayList<>();
+                    for (String header : headers) {
+                        String value = row.getOrDefault(header, "");
+                        values.add("\"" + value.replace("\"", "\"\"") + "\"");
+                    }
+                    csvBuilder.append(String.join(",", values)).append("\n");
+                }
+             }
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -122,5 +149,13 @@ public class Converter {
         return result.trim();
         
     }
-    
+        public static void main(String[] args) {
+        // Test the method with a sample JSON input
+        String jsonInput = "[{\"name\":\"John\",\"age\":\"25\",\"city\":\"New York\"},"
+                + "{\"name\":\"Jane\",\"age\":\"30\",\"city\":\"Los Angeles\"}]";
+
+        // Convert JSON to CSV and print result
+        String csvResult = jsonToCsv(jsonInput);
+        System.out.println(csvResult);
+    }
 }
